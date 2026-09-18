@@ -1,0 +1,140 @@
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../assets/fonts/Montserrat-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../assets/fonts/Montserrat-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../assets/fonts/Montserrat-ExtraBold.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../assets/fonts/Montserrat-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+:root {
+    --main-color: #1a1a1d;
+    --accent-color: #4f4f4f;
+    --font-color: #c3073f;
+    --border-color:#950740;
+    --hover-color: #6f2232;
+    --font-family-base : 'Montserrat', sans-serif;
+    --border: 5px solid var(--border-color);
+}
+
+
+
+body {
+    background-color: var(--main-color);
+    font-family: var(--font-family-base);
+    color: var(--font-color);
+    font-size: 30px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+h1, h2, h3, h4, h5,h6 {
+    font-weight: 600;
+    font-size: 90px;
+    margin: 0px;
+}
+a {
+    height: 50px;
+    text-decoration: none;
+    color: var(--main-color);
+    font-weight: 900;
+}
+
+
+
+.main-header {
+
+
+    border-bottom: var(--border);
+    margin: 15px;
+}
+
+.header-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 20px;
+}
+
+.navigation-list {
+    column-gap: 50px;
+    row-gap: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 50px;
+}
+
+.navigation-item {
+    
+}
+
+.navigation-link {
+    border: var(--border);
+    border-radius: 50px;
+    background-color: var(--font-color);  
+    height: auto;
+    padding: 10px;
+    align-items: center;
+    width: 200px;
+    justify-content: center;
+    transition: 0.3s;
+    &:hover {
+        color: rgb(200, 133, 153);
+        box-shadow: 0px 0px 50px 0px rgba(145, 74, 74, 0.282);
+         &::after {
+            
+            background-color: rgb(200, 133, 153);
+    }
+    }
+}
+
+.is-current {
+    &::after {
+        transition: 0.3s;
+        content: "";
+        width:10px;
+        height: 10px;
+        background-color: var(--main-color);
+        margin-left: 8px;
+        border-radius: 50%;
+    }
+}
+
+
+
+.refresh-button {
+    border: var(--border);
+    padding: 15px;
+    border-radius: 50px;
+    transition: 0.3s;
+    background-color: transparent;
+    color: var(--border-color);
+    &:hover {
+        color: var(--font-color);
+        border-color: var(--font-color);
+    }
+}
