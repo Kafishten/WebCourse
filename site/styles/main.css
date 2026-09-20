@@ -52,16 +52,38 @@ body {
     transition: 0.3s;
 }
 
-h1, h2, h3, h4, h5,h6 {
+h1 {
     font-weight: 600;
     font-size: 90px;
     margin: 0px;
 }
+
+h2{
+    font-weight: 400;
+    font-size: 40px;
+    margin: 0px;
+    display: inline-block;
+}
+h3{
+    font-weight: 300;
+    font-size: 30px;
+    margin: 0px;
+}
+
 a {
-    height: 50px;
     text-decoration: none;
     color: var(--main-color);
     font-weight: 900;
+}
+
+p {
+    font-weight: 300;
+    font-size: 25px;
+    margin: 0px;
+}
+
+button {
+    cursor: default;
 }
 
 
@@ -99,16 +121,15 @@ a {
     height: auto;
     padding: 10px;
     align-items: center;
-    width: 200px;
+    width: 250px;
     justify-content: center;
     transition: 0.3s;
     &:hover {
         color: rgb(200, 133, 153);
         box-shadow: 0px 0px 50px 0px rgba(145, 74, 74, 0.282);
-         &::after {
-            
+            &::after {
             background-color: rgb(200, 133, 153);
-    }
+        }
     }
 }
 
@@ -138,3 +159,124 @@ a {
         border-color: var(--font-color);
     }
 }
+
+.add-new-note{
+    font-size: 90px;
+    font-weight: 100;
+
+}
+
+
+
+
+
+
+
+.filter-info {
+    margin-inline: 20px;
+}
+
+.filtring-div {
+    display: inline-flex;
+    border: var(--border);
+    border-width: 3px;
+    border-radius: 10px;
+    width: auto;
+    padding: 10px;
+    margin: 20px;
+}
+
+.filtring-list{
+    display: flex;
+    column-gap: 20px;
+}
+
+.filtring-item {
+    
+}
+
+.filtring-button {
+    border: var(--border);
+    border-width: 3px;
+    padding-inline: 15px;
+    border-radius: 50px;
+    transition: 0.3s;
+    background-color: transparent;
+    color: var(--border-color);
+    &:hover {
+        color: var(--font-color);
+        border-color: var(--font-color);
+    }
+}
+
+
+
+
+
+
+
+main {
+    margin: 20px;
+    padding: 20px;
+    border-top: 4px dashed var(--border-color);
+}
+
+.add-new-note {
+    transition: 0.3s;
+    height: 10vh;
+    width: 100%;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border:none;
+    border-top: 3px solid var(--border-color);
+    border-bottom: 3px solid var(--border-color);
+    border-radius: 30px;
+    &:hover{
+        border-radius: 50px;
+        --border-color:var(--font-color);
+        
+    }
+}
+
+.plus-icon {
+    transition: 0.3s;
+    fill: var(--border-color);
+    height: 70%; 
+}
+
+.note {
+
+    margin-top: 3vh ;
+    transition: 0.3s;
+    height: auto;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    color: var(--font-color);
+    background-color: transparent;
+    border:none;
+    border-top: 3px solid var(--border-color);
+    border-bottom: 3px solid var(--border-color);
+    border-radius: 30px;
+    &:hover{
+        border-radius: 50px;
+        --border-color:var(--font-color);
+        
+    }
+    
+}
+
+.note-info {
+    text-align: left;
+    flex-grow: 1;
+    border-right: 2px solid #950740;
+    margin-right: 30px;
+}
+.note-data {
+    text-align: left;
+    flex-grow: 4;
+}
+
