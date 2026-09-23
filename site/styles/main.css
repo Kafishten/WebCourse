@@ -83,7 +83,7 @@ p {
 }
 
 button {
-    cursor: default;
+    
 }
 
 
@@ -212,14 +212,39 @@ button {
 
 
 
-
+.central-div {
+    display: flex;
+        margin: 20px;
+    padding: 20px;
+    border-top: 4px dashed var(--border-color);
+    column-gap: 40px;
+}
 
 
 main {
-    margin: 20px;
-    padding: 20px;
-    border-top: 4px dashed var(--border-color);
+
+    flex-grow: 5;
 }
+.nav-tree{
+    
+    flex-grow: 1;
+    transition: 0.3s;
+    height: auto;
+    padding: 20px;
+
+    color: var(--font-color);
+    background-color: transparent;
+    border:none;
+    border-left: 3px solid var(--border-color);
+    border-right: 3px solid var(--border-color);
+    border-radius: 30px;
+    &:hover{
+        border-radius: 50px;
+        --border-color:var(--font-color);
+        
+        }
+    }
+
 
 .add-new-note {
     transition: 0.3s;
@@ -263,8 +288,7 @@ main {
     border-radius: 30px;
     &:hover{
         border-radius: 50px;
-        --border-color:var(--font-color);
-        
+        border-color: var(--font-color);
     }
     
 }
@@ -278,5 +302,39 @@ main {
 .note-data {
     text-align: left;
     flex-grow: 4;
+}
+
+
+.note-type {
+    white-space: pre-wrap;
+    tab-size: 10;
+    &::before {
+        content: "Type:";
+        color: var(--border-color);
+    }
+}
+.note-create {
+    white-space: pre-wrap;
+    tab-size: 10;
+    &::before {
+        content: "Create:";
+        color: var(--border-color);
+    }
+}
+.note-change {
+    white-space: pre-wrap;
+    tab-size: 10;
+    &::before {
+        content: "Change:";
+        color: var(--border-color);
+    }
+}
+.note-tags {
+    white-space: pre-wrap;
+    tab-size: 10;
+    &::before {
+        content: "Tags:";
+        color: var(--border-color);
+    }
 }
 

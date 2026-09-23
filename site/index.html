@@ -8,6 +8,7 @@
     
     <title>Notes</title>
 </head>
+
 <body>
 
     <header class="main-header">
@@ -16,15 +17,15 @@
             <nav class="nav">
                 <ul class="navigation-list">
                     <li class="navigation-item">
-                        <a class="navigation-link is-current" href="/">View notes</a>
+                        <a class="navigation-link is-current" href="#">View notes</a>
                         
                     </li>
                     <li class="navigation-item">
-                        <a class="navigation-link" href="/">Edit filters</a>
+                        <a class="navigation-link" href="#">Edit filters</a>
                         
                     </li>
                     <li class="navigation-item">
-                        <a class="navigation-link" href="/">Help</a>
+                        <a class="navigation-link" href="#">Help</a>
                         
                     </li>
                 </ul>
@@ -62,34 +63,30 @@
             
 
         </div>
-    <main class="main">
+    <div class="central-div">
+        <main class="main" >
 
-        <button class="add-new-note">
-            <?xml version="1.0" ?><svg class="plus-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><title/><g id="Plus"><path d="M32,2A30,30,0,1,0,62,32,30.034,30.034,0,0,0,32,2Zm0,58A28,28,0,1,1,60,32,28.0314,28.0314,0,0,1,32,60Z"/><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
-        </button>
+            <button class="add-new-note">
+                <svg class="plus-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><title/><g id="Plus"><path d="M32,2A30,30,0,1,0,62,32,30.034,30.034,0,0,0,32,2Zm0,58A28,28,0,1,1,60,32,28.0314,28.0314,0,0,1,32,60Z"/><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
+            </button>
 
-        <button class="note">
-            <div class="note-info">
-                <h2>name</h2> 
-                <p>type:</p>
-                <p>create:</p>
-                <p>last change:</p>
-                <p>tag:</p>
-                
+            <div id="note-space">
+            
             </div>
-            <div class="note-data">
-                data
-            </div>
-        </button>
+            
+            
+            
 
-        
-        
+        </main>
+        <aside class="nav-tree">
 
-    </main>
+        </aside>
+    </div>
+    
 
     <footer class="main-footer">
 
     </footer>
-
+    <script type="module" src="assets/scripts/js/src/script.js"></script>
 </body>
 </html>

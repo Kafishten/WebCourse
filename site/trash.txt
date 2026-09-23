@@ -1,0 +1,15 @@
+<button class="note">
+                <div class="note-info">
+                    <h2>name</h2> 
+                    <p>type:</p>
+                    <p>create:</p>
+                    <p>last change:</p>
+                    <p>tag:</p>
+                    
+                </div>
+                <div class="note-data">
+                    data
+                </div>
+            </button>
+
+
