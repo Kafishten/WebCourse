@@ -88,5 +88,35 @@
 
     </footer>
     <script type="module" src="assets/scripts/js/src/script.js"></script>
+    <dialog id="note-dialog">
+        <div class="header-dialog">
+            <div>
+                <label for="input-name">Name: </label>
+                <input type="text" id="input-name" maxlength="22" class="input">
+            </div>
+            <button class="close-button" id="close-dialog">
+                <svg class="plus-icon close-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><title/><g id="Plus"><path d="M32,2A30,30,0,1,0,62,32,30.034,30.034,0,0,0,32,2Zm0,58A28,28,0,1,1,60,32,28.0314,28.0314,0,0,1,32,60Z"/><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
+            </button>
+        </div>
+        
+        <button class="tag-button">Tags</button>
+        <ul class="type-list">
+                <li class="type-item">
+                    <button class="type-button no-select" id="type-text-button">
+                        text
+                    </button>
+                </li>
+                <li class="type-item">
+                    <button class="type-button no-select" id="type-top-button">
+                        top
+                    </button>
+                </li>
+                <li class="type-item">
+                    <button class="type-button no-select" id="type-table-button" >
+                        table
+                    </button>
+                </li>
+            </ul>
+    </dialog>
 </body>
 </html>

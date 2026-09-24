@@ -40,6 +40,39 @@ checkNotes();
 const activeNotes = loadNotes();
 const board = document.querySelector('#note-space');
 const fragment = document.createDocumentFragment();
+const addNoteButton = document.querySelector(".add-new-note");
+const closeDialog = document.querySelector("#close-dialog");
+const addNoteDialog = document.querySelector("#note-dialog");
+addNoteDialog?.showModal();
+addNoteButton?.addEventListener('click', () => {
+    console.log("show modal");
+    addNoteDialog?.showModal();
+});
+closeDialog?.addEventListener('click', () => {
+    console.log("close dialog");
+    addNoteDialog?.close();
+});
+const textButton = document.querySelector("#type-text-button");
+const topButton = document.querySelector("#type-top-button");
+const tableButton = document.querySelector("#type-table-button");
+textButton?.addEventListener('click', () => {
+    console.log("text Button click");
+    topButton?.classList.remove("current-type-button");
+    tableButton?.classList.remove("current-type-button");
+    textButton?.classList.add("current-type-button");
+});
+topButton?.addEventListener('click', () => {
+    console.log("text Button click");
+    topButton?.classList.add("current-type-button");
+    tableButton?.classList.remove("current-type-button");
+    textButton?.classList.remove("current-type-button");
+});
+tableButton?.addEventListener('click', () => {
+    console.log("text Button click");
+    topButton?.classList.remove("current-type-button");
+    tableButton?.classList.add("current-type-button");
+    textButton?.classList.remove("current-type-button");
+});
 activeNotes.forEach(note => {
     const cardElement = document.createElement('div');
     cardElement.classList.add('note');
