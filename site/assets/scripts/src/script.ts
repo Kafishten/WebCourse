@@ -106,6 +106,7 @@ activeNotes.forEach(note => {
 
     const noteData = document.createElement('div');
     noteData.classList.add('note-data');
+    noteData.classList.add('can-be-selected');
     noteData.textContent="data";
 
     const noteName = document.createElement('h2');

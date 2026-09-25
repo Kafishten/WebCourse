@@ -42,12 +42,23 @@
     --border: 5px solid var(--border-color);
 }
 
-.no-select {
+* {
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none;    /* Firefox */
   -ms-user-select: none;     /* Edge/IE */
   user-select: none;         /* Стандартное свойство */
 }
+::selection {
+    background-color: #6f22315e;
+}
+.can-be-selected {
+    -webkit-user-select: textauto; /* Safari */
+    -moz-user-select: text;    /* Firefox */
+    -ms-user-select: text;     /* Edge/IE */
+    user-select: text;   
+    
+}
+
 
 body {
     background-color: var(--main-color);
@@ -88,12 +99,7 @@ p {
     margin: 0px;
 }
 
-label {
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none;    /* Firefox */
-    -ms-user-select: none;     /* Edge/IE */
-    user-select: none;         /* Стандартное свойство */
-}
+
 
 
 
