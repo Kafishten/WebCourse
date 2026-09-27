@@ -1,103 +1,145 @@
-interface INote {
-    name:string;
-    type:string;
-    tags:string[];
-    create:number;
-    change:number;
-    book:number;
-    id:number;
-}
+import { tagButtonAction, addTags } from './dialogFunctions.js';
+import { loadNotes, INote} from './getData.js';
+import { addNote} from './setData.js';
 
-let notesData:INote[] = [];
-const checkNotes = () => {
-    if (localStorage.getItem('USER_NOTES') == null)
-    {
-        console.log("notes not found")
-        console.log("Adding first note...")
-        notesData = [
-            {
-                name:"Hello World!",
-                type:"note",
-                tags:["someTag"],
-                book:0,
-                create:Date.now(),
-                change:Date.now(),
-                id:0}
-        ]   
-        const jsonString = JSON.stringify(notesData); 
-        localStorage.setItem('USER_NOTES', jsonString); 
-        console.log("Ok")
+let Note:{name: string,tags:string[],type:string,data:string} = { name: "Анна", tags: [], type: "", data: "" };
+
+
+// Используем let, так как в JS-коде ты переназначаешь этот буфер ниже
+let fragment = document.createDocumentFragment();
+
+//=========================================//debug
+//addNoteDialog?.showModal();
+
+
+//=========================================//обработка нажатия на кнопку выбора тегов
+addTags();
+const tagsButton = document.querySelector<HTMLButtonElement>("#tag-button");
+tagsButton?.addEventListener('click', () => {
+    tagButtonAction(tagsButton);
+});
+
+//=========================================//определение нажатых тегов
+const tagListDiv = document.querySelector<HTMLDivElement>("#tag-list");
+tagListDiv?.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    if (target.classList.contains('some-tag')) {
+        const selectedTagName = target.dataset.name;
+        console.log(`клик по тегу: ${selectedTagName}`);
+        target.classList.toggle('selected-tag-active'); 
+        Note.tags.push(selectedTagName ?? "!ERROR!");//возможна проблема : теги только добавляются, но не удаляются при отмене пользователем
     }
-    else {console.log("notes found")}
-}
+});
 
-
-const loadNotes = (): INote[] => {
-    // 1. Пытаемся достать строку по ключу
-    const savedString = localStorage.getItem('USER_NOTES');
-
-    // 2. Если друг открыл сайт ВПЕРВЫЕ, ключа еще нет, вернется null
-    if (savedString === null) {
-        return []; // Возвращаем пустой массив
-    }
-
-    // 3. Десериализуем (превращаем мертвую строку обратно в живые объекты TypeScript)
-    // Важно: JSON.parse возвращает тип 'any', поэтому мы жестко указываем 'as Note[]'
-    const parsedNotes = JSON.parse(savedString) as INote[];
-    
-    return parsedNotes;
-};
-
-// Вызываем при старте приложения
-checkNotes();
-const activeNotes = loadNotes();
-
-
-
-
-
-
-const board = document.querySelector<HTMLDivElement>('#note-space');
-const fragment = document.createDocumentFragment();
-const addNoteButton = document.querySelector<HTMLButtonElement>(".add-new-note");
-const closeDialog = document.querySelector<HTMLButtonElement>("#close-dialog");
+//=========================================//открытие модального окна добавления заметки
 const addNoteDialog = document.querySelector<HTMLDialogElement>("#note-dialog");
-
-addNoteDialog?.showModal();
-addNoteButton?.addEventListener('click',() => {
-    console.log("show modal")
+const addNoteButton = document.querySelector<HTMLButtonElement>(".add-new-note");
+addNoteButton?.addEventListener('click', () => {
+    console.log("show modal");
     addNoteDialog?.showModal();
-})
+});
 
-closeDialog?.addEventListener('click',() => {
-    console.log("close dialog")
+//=========================================//закрытие модального окна добавления заметки
+const closeDialog = document.querySelector<HTMLButtonElement>("#close-dialog");
+closeDialog?.addEventListener('click', () => {
+    console.log("close dialog");
     addNoteDialog?.close();
-})
+});
 
+//=========================================//обработка кликов по кнопкам типов
 const textButton = document.querySelector<HTMLButtonElement>("#type-text-button");
+const textInput = document.querySelector<HTMLButtonElement>("#text-input-div");
 const topButton = document.querySelector<HTMLButtonElement>("#type-top-button");
+const topInput = document.querySelector<HTMLButtonElement>("#top-input-div");
 const tableButton = document.querySelector<HTMLButtonElement>("#type-table-button");
-textButton?.addEventListener('click',() => {
-    console.log("text Button click")
-    topButton?.classList.remove("current-type-button")
-    tableButton?.classList.remove("current-type-button")
-    textButton?.classList.add("current-type-button")
-})
-topButton?.addEventListener('click',() => {
-    console.log("text Button click")
-    topButton?.classList.add("current-type-button")
-    tableButton?.classList.remove("current-type-button")
-    textButton?.classList.remove("current-type-button")
-})
-tableButton?.addEventListener('click',() => {
-    console.log("text Button click")
-    topButton?.classList.remove("current-type-button")
-    tableButton?.classList.add("current-type-button")
-    textButton?.classList.remove("current-type-button")
-})
+const tableInput = document.querySelector<HTMLButtonElement>("#table-input-div");
+const submitButton = document.querySelector<HTMLButtonElement>("#submit-button");
 
-activeNotes.forEach(note => {
-    
+textButton?.addEventListener('click', () => {
+    console.log("text Button click");
+    Note.type="text";
+    submitButton?.classList.remove('hidden');
+
+    topButton?.classList.remove("current-type-button");
+    tableButton?.classList.remove("current-type-button");
+    textButton?.classList.add("current-type-button");
+
+    topInput?.classList.add("hidden");
+    tableInput?.classList.add("hidden");
+    textInput?.classList.remove("hidden");
+});
+topButton?.addEventListener('click', () => {
+    console.log("top Button click");
+    Note.type="top";
+    submitButton?.classList.remove('hidden');
+
+    topButton?.classList.add("current-type-button");
+    tableButton?.classList.remove("current-type-button");
+    textButton?.classList.remove("current-type-button");
+
+    topInput?.classList.remove("hidden");
+    tableInput?.classList.add("hidden");
+    textInput?.classList.add("hidden");
+});
+tableButton?.addEventListener('click', () => {
+    console.log("table Button click");
+    Note.type="table";
+    submitButton?.classList.remove('hidden');
+
+    topButton?.classList.remove("current-type-button");
+    tableButton?.classList.add("current-type-button");
+    textButton?.classList.remove("current-type-button");
+
+    topInput?.classList.add("hidden");
+    tableInput?.classList.remove("hidden");
+    textInput?.classList.add("hidden");
+});
+
+
+submitButton?.addEventListener('click', () => {
+    switch (Note.type) {
+        case "text":
+            Note.data = document.querySelector<HTMLInputElement>('#text-input-item')?.value ?? 'DATA_ERROR';
+            Note.name = document.querySelector<HTMLInputElement>('#input-name')?.value ?? 'NAME_ERROR';
+            break;
+
+        default:
+            break;
+    }
+    let newNote: INote=
+    {
+        name: Note.name,
+        type: Note.type,
+        tags: Note.tags,
+        book: 0,
+        create: Date.now(),
+        change: Date.now(),
+        id: 0,
+        data: Note.data
+    }
+    addNoteOnScreen(addNote(loadNotes(),newNote));
+    addNoteDialog?.close();
+});
+
+//=========================================//изменение высоты textarea
+const textarea = document.querySelector<HTMLTextAreaElement>('#text-input-item');
+textarea?.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+    if (addNoteDialog) {
+        if (addNoteDialog.scrollHeight>addNoteDialog.clientHeight){
+            addNoteDialog.classList.add('has-scroll');
+        }
+        else {
+            addNoteDialog.classList.remove('has-scroll');
+        }
+    }
+});
+
+
+
+//=========================================//функция вывода одной заметки на экран
+const addNoteOnScreen = (note:INote) => {
     const cardElement = document.createElement('div');
     cardElement.classList.add('note');
 
@@ -105,23 +147,22 @@ activeNotes.forEach(note => {
     noteInfo.classList.add('note-info');
 
     const noteData = document.createElement('div');
-    noteData.classList.add('note-data');
-    noteData.classList.add('can-be-selected');
-    noteData.textContent="data";
+    noteData.classList.add('note-data', 'can-be-selected');
+    noteData.textContent = note.data;
 
     const noteName = document.createElement('h2');
     noteName.classList.add('note-name');
-    noteName.textContent=note.name;
+    noteName.textContent = note.name;
 
     const noteType = document.createElement('p');
     noteType.classList.add('note-type');
-    noteType.textContent="\t"+note.type;
+    noteType.textContent = "\t" + note.type;
 
     const noteCreate = document.createElement('p');
     noteCreate.classList.add('note-create');
-    noteCreate.textContent = "\t"+new Date(note.create).toLocaleDateString("ru-RU",{
-        year:"numeric",
-        month: "short",   // Выведет слово "сентября" вместо числа
+    noteCreate.textContent = "\t" + new Date(note.create).toLocaleDateString("ru-RU", {
+        year: "numeric",
+        month: "short",
         day: "2-digit",
         hour: "2-digit",
         minute: "2-digit"
@@ -129,9 +170,9 @@ activeNotes.forEach(note => {
 
     const noteChange = document.createElement('p');
     noteChange.classList.add('note-change');
-    noteChange.textContent="\t"+new Date(note.change).toLocaleDateString("ru-RU",{
-        year:"numeric",
-        month: "short",   // Выведет слово "сентября" вместо числа
+    noteChange.textContent = "\t" + new Date(note.change).toLocaleDateString("ru-RU", {
+        year: "numeric",
+        month: "short",
         day: "2-digit",
         hour: "2-digit",
         minute: "2-digit"
@@ -139,10 +180,27 @@ activeNotes.forEach(note => {
 
     const noteTags = document.createElement('p');
     noteTags.classList.add('note-tags');
-    noteTags.textContent="\t"+note.tags.join(' | ');
+    noteTags.textContent = "\t" + note.tags.join(' | ');
 
-    noteInfo.append(noteName,noteType,noteCreate,noteChange,noteTags);
-    cardElement.append(noteInfo,noteData)
+    noteInfo.append(noteName, noteType, noteCreate, noteChange, noteTags);
+    cardElement.append(noteInfo, noteData);
+    
     fragment.append(cardElement);
+    const board = document.querySelector<HTMLDivElement>('#note-space');
+    board?.append(fragment);
+}
+
+
+//=========================================//функция вывода всех заметок на экран
+const addAllNotesOnScreen = (activeNotes:INote[]) => {
+    activeNotes.forEach(note => {
+    addNoteOnScreen(note);
 });
-board?.append(fragment)
+const board = document.querySelector<HTMLDivElement>('#note-space');
+board?.append(fragment);
+}
+
+
+addAllNotesOnScreen(loadNotes())
+
+

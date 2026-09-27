@@ -88,6 +88,7 @@
 
     </footer>
     <script type="module" src="assets/scripts/js/src/script.js"></script>
+
     <dialog id="note-dialog">
         <div class="header-dialog">
             <div>
@@ -98,9 +99,13 @@
                 <svg class="plus-icon close-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><title/><g id="Plus"><path d="M32,2A30,30,0,1,0,62,32,30.034,30.034,0,0,0,32,2Zm0,58A28,28,0,1,1,60,32,28.0314,28.0314,0,0,1,32,60Z"/><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
             </button>
         </div>
+        <div class="horizontal_container">
+            <button id="tag-button" class="type-button">Open tags</button>
+            <div id="tag-list" class="hidden"></div>
+        </div>
         
-        <button class="tag-button">Tags</button>
-        <ul class="type-list">
+        
+            <ul class="type-list">
                 <li class="type-item">
                     <button class="type-button" id="type-text-button">
                         text
@@ -117,6 +122,16 @@
                     </button>
                 </li>
             </ul>
+            <div class="note-data-input">
+                <div class="hidden" id="text-input-div">
+                    <textarea name="" id="text-input-item"></textarea>
+                </div>
+                <div class="hidden" id="top-input-div">456</div>
+                <div class="hidden" id="table-input-div">789</div>
+            </div>
+            <button id="submit-button" class="type-button hidden">Create</button>
     </dialog>
+
+
 </body>
 </html>
