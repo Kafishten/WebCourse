@@ -4,6 +4,7 @@
     "module": "ESNext",
     "rootDir": "../scripts",  
     "outDir": "./js",
+    "sourceMap": true,
     "strict": true
   },
    

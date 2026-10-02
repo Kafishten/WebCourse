@@ -10,7 +10,7 @@ export let addTags = () => {
         const someTag = document.createElement('button');
         someTag.classList.add('some-tag');
         someTag.textContent = tag;
-        someTag.dataset.name = tag;
+        someTag.id = tag;
         fragment.append(someTag);
         //i++;
     });
@@ -19,10 +19,11 @@ export let addTags = () => {
 
 let isTagsButtonOn = false;
 
-export const tagButtonAction = (tagsButton : HTMLButtonElement) => {
+export const tagButtonAction = (tagsButton : HTMLButtonElement, clear: boolean = false) => {
     const tagListDiv = document.querySelector<HTMLDivElement>("#tag-list");
     console.log("tag button click");
-    if (isTagsButtonOn === true) {
+    if (!clear){
+        if (isTagsButtonOn === true) {
         tagsButton.textContent = "Open tags";
         isTagsButtonOn = false;
         tagsButton.classList.remove("current-type-button");
@@ -33,5 +34,14 @@ export const tagButtonAction = (tagsButton : HTMLButtonElement) => {
         tagsButton.classList.add("current-type-button");
         console.log('adding tags');
         tagListDiv?.classList.remove("hidden");
+    }
+    }
+        else {
+            if (isTagsButtonOn === true) {
+            tagsButton.textContent = "Open tags";
+            isTagsButtonOn = false;
+            tagsButton.classList.remove("current-type-button");
+            tagListDiv?.classList.add("hidden");
+        }
     }
 };

@@ -39,27 +39,22 @@
         <h2 class="filter-info">
             Filtring by:
         </h2>
-        
-            <ul class="filtring-list">
-                <li class="filtring-item">
-                    <span>sort:</span>
-                    <button class="filtring-button" id="filtring-button-1">
-                        lorem
-                    </button>
-                </li>
-                <li class="filtring-item">
-                    <span>sort:</span>
-                    <button class="filtring-button" id="filtring-button-2">
-                        lorem
-                    </button>
-                </li>
-                <li class="filtring-item">
-                    <span>sort:</span>
-                    <button class="filtring-button" id="filtring-button-3">
-                        lorem
-                    </button>
-                </li>
-            </ul>
+        <div class="filter-input-div">
+            <input type="text" id="filters" maxlength="50" class="filter_input">
+            <button class="filter-button">
+                <svg class="clear-icon" viewBox="0 0 64 64"><title/><g id="Plus"><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
+            </div>
+            </button>
+
+        <div class="filtring-button-div">
+            <button class="filtring-button" id="filter-include">include</button>
+            <button class="filtring-button" id="filter-type">type</button>
+            <button class="filtring-button" id="filter-tag">tag</button>
+            <button class="filtring-button" id="filter-create">create</button>
+            <button class="filtring-button" id="filter-change">change</button>
+        </div>
+
+            
             
 
         </div>
@@ -67,7 +62,7 @@
         <main class="main" >
 
             <button class="add-new-note">
-                <svg class="plus-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><title/><g id="Plus"><path d="M32,2A30,30,0,1,0,62,32,30.034,30.034,0,0,0,32,2Zm0,58A28,28,0,1,1,60,32,28.0314,28.0314,0,0,1,32,60Z"/><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
+                <svg class="icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><title/><g id="Plus"><path d="M32,2A30,30,0,1,0,62,32,30.034,30.034,0,0,0,32,2Zm0,58A28,28,0,1,1,60,32,28.0314,28.0314,0,0,1,32,60Z"/><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
             </button>
 
             <div id="note-space">
@@ -96,7 +91,7 @@
                 <input type="text" id="input-name" maxlength="22" class="input">
             </div>
             <button class="close-button" id="close-dialog">
-                <svg class="plus-icon close-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><title/><g id="Plus"><path d="M32,2A30,30,0,1,0,62,32,30.034,30.034,0,0,0,32,2Zm0,58A28,28,0,1,1,60,32,28.0314,28.0314,0,0,1,32,60Z"/><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
+                <svg class="icon close-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><title/><g id="Plus"><path d="M32,2A30,30,0,1,0,62,32,30.034,30.034,0,0,0,32,2Zm0,58A28,28,0,1,1,60,32,28.0314,28.0314,0,0,1,32,60Z"/><path d="M48,31H33V16a1,1,0,0,0-2,0V31H16a1,1,0,0,0,0,2H31V48a1,1,0,0,0,2,0V33H48a1,1,0,0,0,0-2Z"/></g></svg>
             </button>
         </div>
         <div class="horizontal_container">
@@ -123,12 +118,12 @@
                 </li>
             </ul>
             <div class="note-data-input">
-                <div class="hidden" id="text-input-div">
+                <div class="hidden input-div" id="text-input-div">
                     <textarea name="" id="text-input-item"></textarea>
                 </div>
-                <div class="hidden" id="top-input-div">456</div>
-                <div class="hidden" id="table-input-div">789</div>
-            </div>
+                <div class="hidden input-div" id="top-input-div">456</div>
+                <div class="hidden input-div" id="table-input-div">789</div>
+            </div> 
             <button id="submit-button" class="type-button hidden">Create</button>
     </dialog>
 

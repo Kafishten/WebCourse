@@ -7,13 +7,11 @@ const checkNotes = () => {
         notesData = [
             {
                 name: "Hello World!",
-                type: "note",
-                tags: ["someTag"],
-                book: 0,
+                type: "text",
+                tags: ["default"],
                 create: Date.now(),
                 change: Date.now(),
-                id: 0,
-                data: "123"
+                data: "123",
             }
         ];
         const jsonString = JSON.stringify(notesData);
@@ -60,3 +58,4 @@ export const loadTags = () => {
     }
     return JSON.parse(savedString);
 };
+//# sourceMappingURL=getData.js.map

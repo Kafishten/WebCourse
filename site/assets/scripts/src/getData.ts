@@ -4,9 +4,8 @@ export interface INote {
     tags: string[];
     create: number;
     change: number;
-    book: number;
-    id: number;
     data: string;
+
 }
 
 //проверка наличия в браузере данных о записках
@@ -18,13 +17,12 @@ const checkNotes = (): boolean => {
         notesData = [
             {
                 name: "Hello World!",
-                type: "note",
-                tags: ["someTag"],
-                book: 0,
+                type: "text",
+                tags: ["default"],
                 create: Date.now(),
                 change: Date.now(),
-                id: 0,
-                data: "123"
+                data: "123",
+
             }
         ];
         const jsonString = JSON.stringify(notesData);
