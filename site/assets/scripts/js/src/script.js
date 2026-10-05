@@ -20,6 +20,10 @@ tagListDiv?.addEventListener('click', (event) => {
 //=========================================// Открытие модалки (Создание НОВОЙ)
 const addNoteDialog = document.querySelector("#note-dialog");
 const addNoteButton = document.querySelector(".add-new-note");
+document.querySelectorAll('.type-button').forEach(btn => btn.classList.remove('current-type-button'));
+document.querySelector('#type-top-button')?.classList.add('current-type-button');
+document.querySelectorAll('.input-div').forEach(div => div.classList.add('hidden'));
+document.querySelector('#top-input-div')?.classList.remove('hidden');
 addNoteButton?.addEventListener('click', () => {
     console.log("show modal (NEW)");
     // Сбрасываем форму в дефолт
@@ -29,17 +33,24 @@ addNoteButton?.addEventListener('click', () => {
         nameInput.value = "New Note";
     if (dataInput)
         dataInput.value = "";
+    const tiers = document.querySelectorAll('.some-tier');
+    const tierDefault = document.querySelector('.card-text');
+    tiers.forEach(i => {
+        i.textContent = "";
+    });
+    if (tierDefault)
+        tierDefault.textContent = "";
     // Гасим все теги
     document.querySelectorAll('.selected-tag-active').forEach(tag => tag.classList.remove('selected-tag-active'));
     // Сбрасываем тип на text
     document.querySelectorAll('.type-button').forEach(btn => btn.classList.remove('current-type-button'));
-    document.querySelector('#type-text-button')?.classList.add('current-type-button');
+    document.querySelector('#type-top-button')?.classList.remove('current-type-button');
     document.querySelectorAll('.input-div').forEach(div => div.classList.add('hidden'));
-    document.querySelector('#text-input-div')?.classList.remove('hidden');
+    document.querySelector('#top-input-div')?.classList.add('hidden');
     // КИЛЛЕР ФИЧА: Говорим модалке, что мы СОЗДАЕМ (оставляем ID пустым)
     if (addNoteDialog)
         addNoteDialog.dataset.editId = "";
-    document.querySelector('#submit-button')?.classList.remove("hidden");
+    document.querySelector('#submit-button')?.classList.add("hidden");
     addNoteDialog?.showModal();
 });
 //=========================================// Обработка кнопок типов
@@ -58,15 +69,79 @@ const switchType = (typeBtn, activeInput) => {
     activeInput?.classList.remove("hidden");
     submitButton?.classList.remove('hidden');
 };
-textButton?.addEventListener('click', () => switchType(textButton, textInput));
-topButton?.addEventListener('click', () => switchType(topButton, topInput));
-tableButton?.addEventListener('click', () => switchType(tableButton, tableInput));
+textButton?.addEventListener('click', () => {
+    if (addNoteDialog)
+        addNoteDialog.classList.remove('has-scroll');
+    switchType(textButton, textInput);
+});
+topButton?.addEventListener('click', () => {
+    switchType(topButton, topInput);
+    if (addNoteDialog)
+        addNoteDialog.classList.add('has-scroll');
+});
+tableButton?.addEventListener('click', () => {
+    if (addNoteDialog)
+        addNoteDialog.classList.remove('has-scroll');
+    switchType(tableButton, tableInput);
+});
+const parseTierListToJSON = () => {
+    // Создаем пустой объект (Словарь)
+    const tierData = {};
+    // 1. Берем все тиры (S, A, B, C...)
+    const tiers = document.querySelectorAll('.some-tier');
+    tiers.forEach(tier => {
+        // Определяем букву тира (можно по классу, но лучше из твоего псевдоэлемента 
+        // или просто отрезав первую букву от класса, например "s-tier" -> "S")
+        let tierLetter = "unknown";
+        if (tier.classList.contains('s-tier'))
+            tierLetter = "s";
+        else if (tier.classList.contains('a-tier'))
+            tierLetter = "a";
+        else if (tier.classList.contains('b-tier'))
+            tierLetter = "b";
+        else if (tier.classList.contains('c-tier'))
+            tierLetter = "c";
+        else if (tier.classList.contains('d-tier'))
+            tierLetter = "d";
+        else if (tier.classList.contains('e-tier'))
+            tierLetter = "e";
+        else if (tier.classList.contains('f-tier'))
+            tierLetter = "f";
+        // Массив для карточек текущего тира
+        const cardsContent = [];
+        // 2. Ищем ВСЕ карточки только внутри ЭТОГО конкретного тира
+        const cards = tier.querySelectorAll('.tier-card');
+        // 3. Вытаскиваем из них чистые данные
+        cards.forEach(card => {
+            // Проверяем, есть ли внутри картинка
+            const img = card.querySelector('img.card-image');
+            if (img && img.src) {
+                // Сохраняем как ссылку с нашим префиксом!
+                if (img.classList.contains("big-image"))
+                    cardsContent.push(`img:big:${img.src}`);
+                else
+                    cardsContent.push(`img:${img.src}`);
+            }
+            else {
+                // Если картинки нет, берем текст
+                const textDiv = card.querySelector('.card-text');
+                if (textDiv && textDiv.innerText.trim() !== "") {
+                    cardsContent.push(textDiv.innerText.trim());
+                }
+            }
+        });
+        // 4. Записываем собранный массив детей в батю
+        tierData[tierLetter] = cardsContent;
+    });
+    // Превращаем красивый JS-объект в строку для localStorage
+    return JSON.stringify(tierData);
+};
 //=========================================// ГЛАВНЫЙ КОНВЕЙЕР СОХРАНЕНИЯ (SUBMIT)
 submitButton?.addEventListener('click', () => {
     const allNotes = loadNotes();
+    let data = "";
     // 1. СЧИТЫВАЕМ ДАННЫЕ ПРЯМО С ЭКРАНА
     const name = document.querySelector('#input-name')?.value ?? 'Без названия';
-    const data = document.querySelector('#text-input-item')?.value ?? '';
     // Считываем активные теги. Ищем все подсвеченные кнопки и берем их ID.
     const activeTagElements = document.querySelectorAll('.selected-tag-active');
     const tags = Array.from(activeTagElements).map(el => el.id);
@@ -78,6 +153,16 @@ submitButton?.addEventListener('click', () => {
         type = "top";
     if (tableButton?.classList.contains('current-type-button'))
         type = "table";
+    switch (type) {
+        case "text":
+            data = document.querySelector('#text-input-item')?.value ?? '';
+            break;
+        case "top":
+            data = parseTierListToJSON();
+            break;
+        default:
+            break;
+    }
     // 2. ОПРЕДЕЛЯЕМ: СОЗДАНИЕ ИЛИ РЕДАКТИРОВАНИЕ?
     const editId = addNoteDialog?.dataset.editId;
     if (editId) {
@@ -189,15 +274,15 @@ const filterNotes = (notes, searchQuery) => {
     });
 };
 const searchInput = document.querySelector('#filters');
-const board = document.querySelector('#note-space');
+const board2 = document.querySelector('#note-space');
 searchInput?.addEventListener('input', () => {
     const query = searchInput.value;
     const allNotes = loadNotes(); // Берем свежую базу
     // Прогоняем базу через наш фильтр
     const filteredNotes = filterNotes(allNotes, query);
     // Очищаем экран и рисуем только те, что прошли фильтр!
-    if (board)
-        board.innerHTML = '';
+    if (board2)
+        board2.innerHTML = '';
     addAllNotesOnScreen(filteredNotes);
 });
 const filtringDiv = document.querySelector('.filtring-button-div');
@@ -215,6 +300,7 @@ filtringButton?.addEventListener('click', (event) => {
         searchInput.value = "";
 });
 //=========================================// ВЫВОД НА ЭКРАН (И КНОПКА РЕДАКТИРОВАНИЯ)
+const defaultTierItem = document.querySelector('.tier-card');
 const addNoteOnScreen = (note) => {
     const cardElement = document.createElement('div');
     cardElement.classList.add('note');
@@ -255,11 +341,73 @@ const addNoteOnScreen = (note) => {
             return;
         // Заполняем форму старыми данными
         const nameInput = document.querySelector('#input-name');
-        const dataInput = document.querySelector('#text-input-item');
         if (nameInput)
             nameInput.value = a.name;
-        if (dataInput)
-            dataInput.value = a.data;
+        switch (a.type) {
+            case "text":
+                const dataInput = document.querySelector('#text-input-item');
+                if (dataInput)
+                    dataInput.value = a.data; //
+                break;
+            case "top":
+                console.log('top enter');
+                const topData = JSON.parse(a.data);
+                for (const [tierName, tierData] of Object.entries(topData)) {
+                    const targetTierDiv = document.querySelector(`.${tierName}-tier`);
+                    if (targetTierDiv)
+                        targetTierDiv.textContent = "";
+                    console.log(`.${tierName}-tier`);
+                    // 3. Теперь перебираем сам массив значений для конкретного тира
+                    tierData.forEach((cardContent) => {
+                        // Клонируем твою базовую болванку (которую мы делали для Drag&Drop)
+                        const newCard = defaultTierItem?.cloneNode(true);
+                        newCard.id = 'card-' + Date.now().toString() + Math.random().toString(36).substr(2, 5); // Уникальный ID
+                        // Находим внутри карточки место для текста
+                        const textDiv = newCard.querySelector('.card-text');
+                        // 4. Вспоминаем твою логику с картинками!
+                        if (cardContent.startsWith('img:')) {
+                            // Это картинка
+                            newCard.classList.add("image-card");
+                            const imgElement = document.createElement('img');
+                            let imageUrl;
+                            if (cardContent.startsWith('img:big:')) {
+                                imageUrl = cardContent.slice(8).trim();
+                                imgElement.classList.add('card-image', 'big-image');
+                            }
+                            else {
+                                imageUrl = cardContent.slice(4).trim();
+                                imgElement.className = 'card-image';
+                            }
+                            imgElement.src = imageUrl;
+                            if (textDiv) {
+                                textDiv.textContent = "";
+                                textDiv.append(imgElement);
+                                textDiv.contentEditable = "false";
+                            }
+                        }
+                        else {
+                            console.log(textDiv);
+                            // Это обычный текст
+                            if (textDiv) {
+                                textDiv.textContent = cardContent;
+                            }
+                        }
+                        console.log(newCard);
+                        // 5. Вешаем слушатель Drag&Drop на новую карточку
+                        newCard.addEventListener('dragstart', (event) => {
+                            event.dataTransfer?.setData("tier-item", newCard.id);
+                        });
+                        // 6. Прикрепляем готовую карточку в нужный тир!
+                        if (targetTierDiv)
+                            targetTierDiv.append(newCard);
+                        else
+                            console.log("no found");
+                    });
+                }
+                break;
+            default:
+                break;
+        }
         // Зажигаем теги
         document.querySelectorAll('.selected-tag-active').forEach(tag => tag.classList.remove('selected-tag-active'));
         a.tags.forEach(tag => {
@@ -321,5 +469,90 @@ textarea?.addEventListener('input', function () {
     else {
         addNoteDialog?.classList.remove('has-scroll');
     }
+});
+//////////////////////////////////////////////////tier перетаскивания
+const defaultTierText = document.querySelector('#default-input-card');
+const deleteSpace = document.querySelector('.remove-card-div');
+deleteSpace?.addEventListener('drop', (event) => {
+    deleteSpace.classList.remove('drag-hover');
+    const draggedItemId = event.dataTransfer?.getData('tier-item');
+    if (draggedItemId)
+        document.getElementById(draggedItemId)?.remove();
+});
+deleteSpace?.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    deleteSpace.classList.add('drag-hover');
+});
+deleteSpace?.addEventListener('dragleave', (event) => {
+    event.preventDefault(); // "Разрешаю сброс сюда!"
+    deleteSpace.classList.remove('drag-hover');
+});
+defaultTierItem?.addEventListener('dragstart', (event) => {
+    if (defaultTierText)
+        event.dataTransfer?.setData("tier-item", defaultTierText.id);
+});
+const tierSpaces = document.querySelectorAll('.some-tier');
+tierSpaces.forEach(i => {
+    i.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        i.classList.add('drag-hover');
+    });
+    i?.addEventListener('dragleave', (event) => {
+        event.preventDefault(); // "Разрешаю сброс сюда!"
+        i.classList.remove('drag-hover');
+    });
+    i?.addEventListener('drop', (event) => {
+        event.preventDefault();
+        i.classList.remove('drag-hover');
+        const draggedItemId = event.dataTransfer?.getData('tier-item');
+        if (!draggedItemId)
+            return;
+        console.log("id " + draggedItemId);
+        if (draggedItemId === "default-input-card")
+            if (defaultTierText?.textContent?.includes('img:')) {
+                const img = document.createElement('img');
+                img.classList.add('card-image');
+                if (defaultTierText?.textContent?.includes('big:')) {
+                    defaultTierText.textContent = defaultTierText.textContent.replace('img:big:', '');
+                    img.classList.add('big-image');
+                }
+                else {
+                    defaultTierText.textContent = defaultTierText.textContent.replace('img:', '');
+                }
+                img.src = `${defaultTierText.textContent.toString()}`;
+                defaultTierText.textContent = "";
+                defaultTierText.append(img);
+                const newTierItem = defaultTierItem?.cloneNode(true);
+                newTierItem.id = 'card-' + Date.now().toString();
+                newTierItem.classList.add("image-card");
+                i.append(newTierItem);
+                console.log('image well');
+                newTierItem?.addEventListener('dragstart', (event) => {
+                    if (newTierItem)
+                        event.dataTransfer?.setData("tier-item", newTierItem.id);
+                });
+            }
+            else {
+                const newTierItem = defaultTierItem?.cloneNode(true);
+                newTierItem.id = 'card-' + Date.now().toString();
+                newTierItem.classList.add("tier-card");
+                i.append(newTierItem);
+                newTierItem?.addEventListener('dragstart', (event) => {
+                    if (newTierItem)
+                        event.dataTransfer?.setData("tier-item", newTierItem.id);
+                });
+            }
+        else {
+            // 1. Находим оригинальную карточку (без решетки!)
+            const oldCard = document.getElementById(draggedItemId);
+            // 2. Если нашли - просто бросаем ее в новый тир (i)
+            if (oldCard) {
+                // Браузер сам вырвет её со старого места и вставит сюда!
+                i.append(oldCard);
+            }
+        }
+        if (defaultTierText)
+            defaultTierText.textContent = "";
+    });
 });
 //# sourceMappingURL=script.js.map

@@ -33,13 +33,20 @@
 
 :root {
     --main-color: #1d1a1a;
-    --main-color-transparent: #1d1a1ae3;
-    --accent-color: #4f4f4f;
+    --main-color-transparent: #1d1a1aea;
+    --accent-color: #282828;
     --font-color: #c3073f;
     --border-color:#950740;
     --hover-color: #6f2232;
     --font-family-base : 'Montserrat', sans-serif;
     --border: 5px solid var(--border-color);
+    --A-color: #ff8c42;
+    --B-color: #ffcf54;
+    --C-color: #a3d76c;
+    --D-color: #42b9f5;
+    --E-color: #8b5cf6;
+    --F-color: #6b7280;
+    --none-color:#9a6c6c;
 }
 
 * {
@@ -63,6 +70,17 @@
     display: none;
 }
 
+textarea {
+    background-color: var(--accent-color);
+    border: 4px solid var(--border-color);
+    margin: 20px;
+    color: var(--font-color);
+    width: 95vw;
+    height: 25vw;
+    border-radius: 30px;
+    padding: 20px;
+    resize: none;
+}
 
 body {
     background-color: var(--main-color);
@@ -249,7 +267,7 @@ p {
 
 
 .central-div {
-    display: flex;
+
         margin: 20px;
     padding: 20px;
     border-top: 4px dashed var(--border-color);
@@ -259,7 +277,7 @@ p {
 
 main {
 
-    flex-grow: 5;
+
 }
 .nav-tree{
     min-width: 10%;
@@ -343,11 +361,11 @@ main {
     
 }
 .note {
-
+    overflow-y: hidden;
     margin-top: 3vh ;
     transition: 0.3s;
     height: min-content;
-    
+    max-height: 30vh;
     width: 100%;
     padding: 20px;
     display: flex;
@@ -409,7 +427,7 @@ main {
     flex-grow: 1;
     overflow-y: scroll;
     height: 100%;
-    
+    max-height: 25vh;
     scrollbar-color: var(--font-color) var(--main-color);
 
     &::-webkit-scrollbar-track {
@@ -466,9 +484,11 @@ main {
     background-color: var(--main-color-transparent);
     color: var(--font-color);
     box-shadow: 0px 0px 100px 24px rgba(0, 0, 0, 0.46);
-    width: 70vw;
-    height: 70vh;
-    
+    width: 85vw;
+    height: 100vh;
+    max-width: 85vw;
+    resize: none;
+    overflow-x: hidden;
     scrollbar-color: var(--font-color) var(--main-color);
 
     &::-webkit-scrollbar-track {
@@ -480,6 +500,9 @@ main {
     &::-webkit-scrollbar-thumb:hover {
             background-color: var(--main-color);
         }
+    &:focus{
+        outline: none;
+    }
 }
 #note-dialog.has-scroll {
     border-radius: 30px 0px 0px 30px;
@@ -597,16 +620,223 @@ main {
     padding: 20px 15px;
     resize: none;
     overflow-y: hidden;
-
-
-
-
     &:focus {
         outline: none;
     }
+}
 
+
+#tier-list-input {
+    margin-top: 20px;
+    
+}
+
+.tier-list {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    column-gap: 10px;
+    width: 70vw;
 
 }
+
+.tier-card {
+    display: flex;
+
+    min-width: 250px;
+    width: 250px;
+    border: 3px solid;
+    border-color: inherit;
+    color: inherit;
+    border-radius: 20px 0px 0px 20px;
+    height: 80px;
+    &:focus {
+        outline: none;
+    }
+}
+
+.card-image {
+    height: 100px;
+    width: 100px;
+    padding: 3px;
+    object-fit: cover;
+}
+
+.image-card {
+    min-width: 0px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.big-image {
+    width: 150px;
+    height: 150px;
+}
+
+.drag-handle {
+    font-size: 50px;
+    border-right: 3px solid;
+    border-color: inherit;
+    color: inherit;
+    margin-right: 5px;
+    &:focus {
+        outline: none;
+    }
+}
+.card-text {
+    overflow-x: hidden;
+    overflow-y: visible;
+    font-size: 24px;
+    color: inherit;
+    &:focus {
+        outline: none;
+    }
+    flex-grow: 1;
+}
+
+.some-tier-header {
+    transition: 0.3s;
+    min-height: 90px;
+
+    border: 3px solid var(--accent-color);
+    border-radius: 20px 20px 0px 20px;
+    display: flex;
+    &::before {
+        flex-shrink: 0;
+        content: "";
+        width: 80px;
+        font-size: 50px;
+        font-weight: 900;
+        color: var(--main-color);
+        align-content: center;
+        text-align: center;
+        border-radius: 14px 0px 0px 14px;
+    }
+}
+
+
+.some-tier {
+    min-height: 110px;
+    height: fit-content;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    padding: 10px;
+    display: flex;
+
+    row-gap: 10px;
+    column-gap: 0.5%;
+    flex-grow: 1;
+    border-radius: 0px 16px 16px 0px;
+    border-color: inherit;
+    color: inherit;
+    &:hover {
+        transition: 0.3s;
+        background-color: var(--accent-color);
+    }
+
+    
+}
+
+.drag-hover {
+    transition: 0.3s;
+        background-color: var(--accent-color);
+}
+.tier-element {
+    background-color: var(--accent-color);
+    border: 2px solid var(--border-color);
+    min-width: 10%;
+
+    width: max-content;
+    
+    height: 40px;
+    resize: none;
+}
+
+
+.remove-card-div
+{
+    width: 100px;
+    border: 3px solid var(--border-color);
+    border-radius: 20px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+
+    &:hover {
+        transition: 0.3s;
+        background-color: var(--accent-color);
+    }
+}
+.s-tier-header {
+    border-color: var(--font-color);
+    color:var(--font-color);
+    &::before {
+        content: "S";
+        background-color: var(--font-color);
+    }
+}
+.a-tier-header {
+    border-color: var(--A-color);
+    color:var(--A-color);
+    &::before {
+        content: "A";
+        background-color: var(--A-color);
+    }
+
+    scrollbar-color: var(--A-color) var(--main-color);
+
+}
+.b-tier-header {
+    border-color: var(--B-color);
+    color:var(--B-color);
+    scrollbar-color: var(--B-color) var(--main-color);
+    &::before {
+        content: "B";
+        background-color: var(--B-color);
+    }
+}
+.c-tier-header {
+    border-color: var(--C-color);
+    color:var(--C-color);
+    scrollbar-color: var(--C-color) var(--main-color);
+    &::before {
+        content: "C";
+        background-color: var(--C-color);
+    }
+}
+.d-tier-header {
+    border-color: var(--D-color);
+    color:var(--D-color);
+    scrollbar-color: var(--D-color) var(--main-color);
+    &::before {
+        content: "D";
+        background-color: var(--D-color);
+    }
+}
+.e-tier-header {
+    border-color: var(--E-color);
+    color:var(--E-color);
+    scrollbar-color: var(--E-color) var(--main-color);
+    &::before {
+        content: "E";
+        background-color: var(--E-color);
+    }
+}
+.f-tier-header {
+    border-color: var(--F-color);
+    color:var(--F-color);
+    scrollbar-color: var(--F-color) var(--main-color);
+    &::before {
+        content: "F";
+        background-color: var(--F-color);
+    }
+}
+
+
+
+
+
 
 @media (max-width:1440px) {
     .nav-tree {

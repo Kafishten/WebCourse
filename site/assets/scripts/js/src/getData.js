@@ -11,7 +11,7 @@ const checkNotes = () => {
                 tags: ["default"],
                 create: Date.now(),
                 change: Date.now(),
-                data: "123",
+                data: "default text",
             }
         ];
         const jsonString = JSON.stringify(notesData);

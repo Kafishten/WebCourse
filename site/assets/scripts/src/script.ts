@@ -25,6 +25,12 @@ tagListDiv?.addEventListener('click', (event) => {
 const addNoteDialog = document.querySelector<HTMLDialogElement>("#note-dialog");
 const addNoteButton = document.querySelector<HTMLButtonElement>(".add-new-note");
 
+document.querySelectorAll('.type-button').forEach(btn => btn.classList.remove('current-type-button'));
+    document.querySelector('#type-top-button')?.classList.add('current-type-button');
+    document.querySelectorAll('.input-div').forEach(div => div.classList.add('hidden'));
+    document.querySelector('#top-input-div')?.classList.remove('hidden');
+
+
 addNoteButton?.addEventListener('click', () => {
     console.log("show modal (NEW)");
     
@@ -33,20 +39,27 @@ addNoteButton?.addEventListener('click', () => {
     const dataInput = document.querySelector<HTMLInputElement>('#text-input-item');
     if (nameInput) nameInput.value = "New Note";
     if (dataInput) dataInput.value = "";
+    const tiers = document.querySelectorAll<HTMLDivElement>('.some-tier');
+    const tierDefault = document.querySelector<HTMLDivElement>('.card-text');
+    tiers.forEach(i=>{
+        i.textContent="";
+    })
+    if (tierDefault) tierDefault.textContent="";
+
 
     // Гасим все теги
     document.querySelectorAll('.selected-tag-active').forEach(tag => tag.classList.remove('selected-tag-active'));
     
     // Сбрасываем тип на text
     document.querySelectorAll('.type-button').forEach(btn => btn.classList.remove('current-type-button'));
-    document.querySelector('#type-text-button')?.classList.add('current-type-button');
+    document.querySelector('#type-top-button')?.classList.remove('current-type-button');
     document.querySelectorAll('.input-div').forEach(div => div.classList.add('hidden'));
-    document.querySelector('#text-input-div')?.classList.remove('hidden');
+    document.querySelector('#top-input-div')?.classList.add('hidden');
 
     // КИЛЛЕР ФИЧА: Говорим модалке, что мы СОЗДАЕМ (оставляем ID пустым)
     if (addNoteDialog) addNoteDialog.dataset.editId = "";
 
-    document.querySelector<HTMLButtonElement>('#submit-button')?.classList.remove("hidden");
+    document.querySelector<HTMLButtonElement>('#submit-button')?.classList.add("hidden");
     addNoteDialog?.showModal();
 });
 
@@ -70,18 +83,82 @@ const switchType = (typeBtn: HTMLElement | null, activeInput: HTMLElement | null
     submitButton?.classList.remove('hidden');
 }
 
-textButton?.addEventListener('click', () => switchType(textButton, textInput));
-topButton?.addEventListener('click', () => switchType(topButton, topInput));
-tableButton?.addEventListener('click', () => switchType(tableButton, tableInput));
+textButton?.addEventListener('click', () => 
+    {
+        if (addNoteDialog) addNoteDialog.classList.remove('has-scroll');
+        switchType(textButton, textInput);
+    });
 
+topButton?.addEventListener('click', () => {
+        switchType(topButton, topInput);
+        if (addNoteDialog) addNoteDialog.classList.add('has-scroll');
+    });
+tableButton?.addEventListener('click', () => 
+    {
+        if (addNoteDialog) addNoteDialog.classList.remove('has-scroll');
+        switchType(tableButton, tableInput);
+    });
+
+
+const parseTierListToJSON = (): string => {
+    // Создаем пустой объект (Словарь)
+    const tierData: Record<string, string[]> = {};
+    
+    // 1. Берем все тиры (S, A, B, C...)
+    const tiers = document.querySelectorAll<HTMLDivElement>('.some-tier');
+    
+    tiers.forEach(tier => {
+        // Определяем букву тира (можно по классу, но лучше из твоего псевдоэлемента 
+        // или просто отрезав первую букву от класса, например "s-tier" -> "S")
+        let tierLetter = "unknown";
+        if (tier.classList.contains('s-tier')) tierLetter = "s";
+        else if (tier.classList.contains('a-tier')) tierLetter = "a";
+        else if (tier.classList.contains('b-tier')) tierLetter = "b";
+        else if (tier.classList.contains('c-tier')) tierLetter = "c";
+        else if (tier.classList.contains('d-tier')) tierLetter = "d";
+        else if (tier.classList.contains('e-tier')) tierLetter = "e";
+        else if (tier.classList.contains('f-tier')) tierLetter = "f";
+
+        // Массив для карточек текущего тира
+        const cardsContent: string[] = [];
+        
+        // 2. Ищем ВСЕ карточки только внутри ЭТОГО конкретного тира
+        const cards = tier.querySelectorAll<HTMLDivElement>('.tier-card');
+        
+        // 3. Вытаскиваем из них чистые данные
+        cards.forEach(card => {
+            // Проверяем, есть ли внутри картинка
+            const img = card.querySelector<HTMLImageElement>('img.card-image');
+            if (img && img.src) {
+                // Сохраняем как ссылку с нашим префиксом!
+                if (img.classList.contains("big-image"))
+                        cardsContent.push(`img:big:${img.src}`);
+                else cardsContent.push(`img:${img.src}`);
+            } else {
+                // Если картинки нет, берем текст
+                const textDiv = card.querySelector<HTMLDivElement>('.card-text');
+                if (textDiv && textDiv.innerText.trim() !== "") {
+                    cardsContent.push(textDiv.innerText.trim());
+                }
+            }
+        });
+        
+        // 4. Записываем собранный массив детей в батю
+        tierData[tierLetter] = cardsContent;
+    });
+
+    // Превращаем красивый JS-объект в строку для localStorage
+    return JSON.stringify(tierData);
+};
 
 //=========================================// ГЛАВНЫЙ КОНВЕЙЕР СОХРАНЕНИЯ (SUBMIT)
 submitButton?.addEventListener('click', () => {
     const allNotes = loadNotes();
-    
+    let data : string ="";
     // 1. СЧИТЫВАЕМ ДАННЫЕ ПРЯМО С ЭКРАНА
     const name = document.querySelector<HTMLInputElement>('#input-name')?.value ?? 'Без названия';
-    const data = document.querySelector<HTMLTextAreaElement>('#text-input-item')?.value ?? '';
+
+    
     
     // Считываем активные теги. Ищем все подсвеченные кнопки и берем их ID.
     const activeTagElements = document.querySelectorAll('.selected-tag-active');
@@ -92,6 +169,18 @@ submitButton?.addEventListener('click', () => {
     let type = "text";
     if (topButton?.classList.contains('current-type-button')) type = "top";
     if (tableButton?.classList.contains('current-type-button')) type = "table";
+
+    switch (type) {
+        case "text":
+            data = document.querySelector<HTMLTextAreaElement>('#text-input-item')?.value ?? '';
+            break;
+        case "top":
+            data = parseTierListToJSON();
+            break;
+    
+        default:
+            break;
+    }
 
     // 2. ОПРЕДЕЛЯЕМ: СОЗДАНИЕ ИЛИ РЕДАКТИРОВАНИЕ?
     const editId = addNoteDialog?.dataset.editId;
@@ -224,7 +313,7 @@ const filterNotes = (notes: INote[], searchQuery: string): INote[] => {
 };
 
 const searchInput = document.querySelector<HTMLInputElement>('#filters');
-const board = document.querySelector<HTMLDivElement>('#note-space');
+const board2 = document.querySelector<HTMLDivElement>('#note-space');
 
 searchInput?.addEventListener('input', () => {
     const query = searchInput.value;
@@ -234,7 +323,7 @@ searchInput?.addEventListener('input', () => {
     const filteredNotes = filterNotes(allNotes, query);
     
     // Очищаем экран и рисуем только те, что прошли фильтр!
-    if (board) board.innerHTML = '';
+    if (board2) board2.innerHTML = '';
     addAllNotesOnScreen(filteredNotes);
 });
 
@@ -259,6 +348,7 @@ filtringButton?.addEventListener('click', (event)=> {
 
 
 //=========================================// ВЫВОД НА ЭКРАН (И КНОПКА РЕДАКТИРОВАНИЯ)
+const defaultTierItem = document.querySelector<HTMLDivElement>('.tier-card');
 const addNoteOnScreen = (note:INote) => {
     const cardElement = document.createElement('div');
     cardElement.classList.add('note');
@@ -295,6 +385,10 @@ const addNoteOnScreen = (note:INote) => {
     noteEditBut.id = note.create.toString();
     noteEditBut.innerHTML = '<svg class="icon" width="100%" height="100%" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M25.384,11.987a.993.993,0,0,1-.707-.293L20.434,7.452a1,1,0,0,1,0-1.414l2.122-2.121a3.07,3.07,0,0,1,4.242,0l1.414,1.414a3,3,0,0,1,0,4.242l-2.122,2.121A.993.993,0,0,1,25.384,11.987ZM22.555,6.745l2.829,2.828L26.8,8.159a1,1,0,0,0,0-1.414L25.384,5.331a1.023,1.023,0,0,0-1.414,0Z"/><path d="M11.9,22.221a2,2,0,0,1-1.933-2.487l.875-3.5a3.02,3.02,0,0,1,.788-1.393l8.8-8.8a1,1,0,0,1,1.414,0l4.243,4.242a1,1,0,0,1,0,1.414l-8.8,8.8a3,3,0,0,1-1.393.79h0l-3.5.875A2.027,2.027,0,0,1,11.9,22.221Zm3.752-1.907h0ZM21.141,8.159l-8.094,8.093a1,1,0,0,0-.262.465l-.876,3.5,3.5-.876a1,1,0,0,0,.464-.263l8.094-8.094Z"/><path d="M22,29H8a5.006,5.006,0,0,1-5-5V10A5.006,5.006,0,0,1,8,5h9.64a1,1,0,0,1,0,2H8a3,3,0,0,0-3,3V24a3,3,0,0,0,3,3H22a3,3,0,0,0,3-3V14.61a1,1,0,0,1,2,0V24A5.006,5.006,0,0,1,22,29Z"/></svg>';
     
+
+
+
+
     // ОТКРЫТИЕ МОДАЛКИ (РЕДАКТИРОВАНИЕ)
     noteEditBut?.addEventListener('click', (event) => {
         const target = event.currentTarget as HTMLElement;
@@ -303,9 +397,75 @@ const addNoteOnScreen = (note:INote) => {
 
         // Заполняем форму старыми данными
         const nameInput = document.querySelector<HTMLInputElement>('#input-name');
-        const dataInput = document.querySelector<HTMLInputElement>('#text-input-item');
         if (nameInput) nameInput.value = a.name;
-        if (dataInput) dataInput.value = a.data;
+        
+        switch (a.type) {
+            case "text":
+                const dataInput = document.querySelector<HTMLInputElement>('#text-input-item');
+                if (dataInput) dataInput.value = a.data;//
+                break;
+
+            case "top":
+                console.log('top enter');
+                const topData = JSON.parse(a.data) as Record<string, string[]>;
+                for (const [tierName,tierData] of Object.entries(topData)) {
+                    const targetTierDiv = document.querySelector<HTMLDivElement>(`.${tierName}-tier`);
+                    if (targetTierDiv)  targetTierDiv.textContent="";
+                        console.log(`.${tierName}-tier`)
+                        // 3. Теперь перебираем сам массив значений для конкретного тира
+                        tierData.forEach((cardContent: string) => {
+                            
+                            // Клонируем твою базовую болванку (которую мы делали для Drag&Drop)
+                            const newCard = defaultTierItem?.cloneNode(true) as HTMLDivElement;
+                            newCard.id = 'card-' + Date.now().toString() + Math.random().toString(36).substr(2, 5); // Уникальный ID
+                            
+                            // Находим внутри карточки место для текста
+                            const textDiv = newCard.querySelector<HTMLDivElement>('.card-text');
+                            
+                            // 4. Вспоминаем твою логику с картинками!
+                            if (cardContent.startsWith('img:')) {
+                                // Это картинка
+                                newCard.classList.add("image-card");
+                                const imgElement = document.createElement('img');
+                                let imageUrl : string;
+                                if (cardContent.startsWith('img:big:')){
+                                imageUrl = cardContent.slice(8).trim();
+                                imgElement.classList.add('card-image','big-image')
+                                }
+                                else {
+                                    imageUrl = cardContent.slice(4).trim();
+                                    imgElement.className = 'card-image';
+                                }
+                                imgElement.src = imageUrl;
+                                
+                                if (textDiv) {
+                                    textDiv.textContent = "";
+                                    textDiv.append(imgElement);
+                                    textDiv.contentEditable = "false";
+                                }
+                            } else {
+                                console.log(textDiv)
+                                // Это обычный текст
+                                if (textDiv) {
+                                    textDiv.textContent = cardContent;
+                                }
+                            }
+                            console.log(newCard)
+                            // 5. Вешаем слушатель Drag&Drop на новую карточку
+                            newCard.addEventListener('dragstart', (event) => {
+                                event.dataTransfer?.setData("tier-item", newCard.id);
+                            });
+
+                            // 6. Прикрепляем готовую карточку в нужный тир!
+                            if (targetTierDiv) targetTierDiv.append(newCard);
+                            else console.log("no found")
+                        });
+                    }
+                break;
+                
+            default:
+                break;
+        }
 
         // Зажигаем теги
         document.querySelectorAll('.selected-tag-active').forEach(tag => tag.classList.remove('selected-tag-active'));
@@ -382,3 +542,105 @@ textarea?.addEventListener('input', function() {
         addNoteDialog?.classList.remove('has-scroll');
     }
 });
+
+
+//////////////////////////////////////////////////tier перетаскивания
+const defaultTierText = document.querySelector<HTMLDivElement>('#default-input-card');
+const deleteSpace = document.querySelector<HTMLDivElement>('.remove-card-div');
+
+deleteSpace?.addEventListener('drop', (event) => {
+    deleteSpace.classList.remove('drag-hover')
+    const draggedItemId = event.dataTransfer?.getData('tier-item');
+    if (draggedItemId) document.getElementById(draggedItemId)?.remove();
+});
+deleteSpace?.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        deleteSpace.classList.add('drag-hover')
+    });
+
+deleteSpace?.addEventListener('dragleave', (event) => {
+        event.preventDefault(); // "Разрешаю сброс сюда!"
+        deleteSpace.classList.remove('drag-hover')
+    })
+
+
+
+defaultTierItem?.addEventListener('dragstart', (event) => {
+    if (defaultTierText) event.dataTransfer?.setData("tier-item",defaultTierText.id);
+});
+
+const tierSpaces = document.querySelectorAll<HTMLDivElement>('.some-tier');
+tierSpaces.forEach(i => {
+    i.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        i.classList.add('drag-hover')
+    });
+
+    i?.addEventListener('dragleave', (event) => {
+        event.preventDefault(); // "Разрешаю сброс сюда!"
+        i.classList.remove('drag-hover')
+    })
+
+    i?.addEventListener('drop', (event) => {
+    event.preventDefault();
+    i.classList.remove('drag-hover')
+    const draggedItemId = event.dataTransfer?.getData('tier-item');
+    if (!draggedItemId) return;
+    
+    console.log("id "+draggedItemId);
+    if(draggedItemId === "default-input-card")
+        if (defaultTierText?.textContent?.includes('img:')){
+            const img = document.createElement('img');
+            img.classList.add('card-image');
+            if (defaultTierText?.textContent?.includes('big:'))
+            {
+                defaultTierText.textContent = defaultTierText.textContent.replace('img:big:','');
+                img.classList.add('big-image');
+            }
+                
+            else
+                {
+                    defaultTierText.textContent = defaultTierText.textContent.replace('img:','');
+                } 
+            
+            img.src=`${defaultTierText.textContent.toString()}`;
+            
+            defaultTierText.textContent="";
+            defaultTierText.append(img);
+            
+            const newTierItem = defaultTierItem?.cloneNode(true) as HTMLDivElement;
+            newTierItem.id = 'card-' + Date.now().toString();
+            newTierItem.classList.add("image-card");
+            i.append(newTierItem);
+            console.log('image well')
+            newTierItem?.addEventListener('dragstart', (event) => {
+                if (newTierItem) event.dataTransfer?.setData("tier-item",newTierItem.id);
+            });
+        }
+        else {
+
+
+            const newTierItem = defaultTierItem?.cloneNode(true) as HTMLDivElement;
+            newTierItem.id = 'card-' + Date.now().toString();
+            newTierItem.classList.add("tier-card");
+            i.append(newTierItem);
+            newTierItem?.addEventListener('dragstart', (event) => {
+                if (newTierItem) event.dataTransfer?.setData("tier-item",newTierItem.id);
+            });
+        }
+        else {
+    // 1. Находим оригинальную карточку (без решетки!)
+    const oldCard = document.getElementById(draggedItemId);
+    
+    // 2. Если нашли - просто бросаем ее в новый тир (i)
+    if (oldCard) {
+        // Браузер сам вырвет её со старого места и вставит сюда!
+        i.append(oldCard); 
+    }
+}
+    
+
+    if (defaultTierText) defaultTierText.textContent="";
+});
+})
+
