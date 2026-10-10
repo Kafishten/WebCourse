@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/reset.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <title>Notes</title>
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="header-div">
+            <h1>Notes</h1>
+            <nav class="nav">
+                <ul class="navigation-list">
+                    <li class="navigation-item">
+                        <a class="navigation-link" href="index.html">View notes</a>
+                    </li>
+                    <li class="navigation-item">
+                        <a class="navigation-link " href="#">Edit tags</a>
+                    </li>
+                    <li class="navigation-item">
+                        <a class="navigation-link" href="backup.html">Backups</a>
+                    </li>
+                </ul>
+            </nav>
+        <a class="refresh-button" href="schemes.html">schemes</a>
+        </div>
+    </header>
+    <div class="schemes-container" style="display: flex; align-items: center    ; flex-direction: column;">
+
+    <script src="https://mermaid.live/embed.js" async></script>
+    <H2>Логическая структура сайта</H2>
+        <mermaid-embed src="https://mermaid.live/embed?theme=redux-dark-color&look=classic&mode=light" height="100vh" width="50vw">
+        graph TD
+            %% Стилизация узлов (Темная тема)
+            classDef page fill:#2b2b2b,stroke:#00d8ff,stroke-width:2px,color:#ffffff;
+            classDef db fill:#ff4b4b,stroke:#333,stroke-width:2px,color:#ffffff;
+            classDef modal fill:#ff8c42,stroke:#333,stroke-width:2px,color:#ffffff;
+            classDef static fill:#4caf50,stroke:#333,stroke-width:2px,color:#ffffff;
+
+            %% Узлы
+            Nav[Общая навигация / HEADER]:::page
+            Index(index.html&lt;br>Доска заметок):::page
+            Tags(tags.html&lt;br>Редактор тегов):::page
+            Backup(backup.html&lt;br>Резервные копии):::page
+            Schemes(schemes.html&lt;br>Архитектурные схемы):::static
+            Modal{{Модальное окно&lt;br>Создание/Редактирование}}:::modal
+            LS[(База данных&lt;br>LocalStorage)]:::db
+
+            %% Связи навигации (Меню)
+            Nav ==>|Ссылка: View notes| Index
+            Nav ==>|Ссылка: Edit tags| Tags
+            Nav ==>|Ссылка: Backups| Backup
+            Nav ==>|Кнопка: Schemes| Schemes
+
+            %% Внутренние взаимодействия
+            Index -.->|Открытие формы по кнопке '+'| Modal
+            Modal -.->|Кнопка Create/Submit| LS
+            
+            %% Взаимодействие с базой данных
+            Index &lt;-->|Чтение / Удаление заметок| LS
+            Tags &lt;-->|Чтение / Запись словаря тегов| LS
+            Backup &lt;-->|Экспорт / Импорт всей БД целиком| LS
+        </mermaid-embed>
+        <br>
+        <br>
+        <h2>Логическая структура страницы</h2>
+        <script src="https://mermaid.live/embed.js" async></script>
+        <mermaid-embed src="https://mermaid.live/embed?theme=redux-dark-color&look=classic&mode=light" width="50vw" height="100vh">
+            graph TB
+            %% Стилизация узлов (Темная тема)
+            classDef wrapper fill:#1a1a1a,stroke:#888,stroke-width:2px,stroke-dasharray: 5 5,color:#ffffff;
+            classDef block fill:#2b2b2b,stroke:#ff8c42,stroke-width:2px,color:#ffffff;
+            classDef interactive fill:#2b2b2b,stroke:#00d8ff,stroke-width:2px,color:#ffffff;
+
+            %% Структура
+            Body[[Тег BODY / Viewport]]:::wrapper
+            
+            Header[HEADER .main-header&lt;br>Логотип + Навигация + Кнопка Schemes]:::block
+            Filters[DIV .filtring-div&lt;br>Строка поиска + Кнопки фильтров]:::interactive
+            
+            CentralDiv[[DIV .central-div&lt;br>Обертка контента]]:::wrapper
+            Main[MAIN .main&lt;br>Рабочая область]:::block
+            
+            BtnAdd[BUTTON .add-new-note&lt;br>Кнопка добавления '+']:::interactive
+            Board[DIV #note-space&lt;br>Сетка сгенерированных карточек]:::interactive
+            
+            Footer[FOOTER .main-footer]:::block
+            Dialog{{DIALOG #note-dialog&lt;br>Всплывающее окно}}:::interactive
+            DialogInner[Форма: Название, Выбор тегов, Тип контента&lt;br> + Зона ввода / Тир-лист]:::block
+
+            %% Иерархия
+            Body --- Header
+            Body --- Filters
+            Body --- CentralDiv
+            Body --- Footer
+            Body -. Фиксировано поверх контента .-> Dialog
+            
+            CentralDiv --- Main
+            
+            Main --- BtnAdd
+            Main --- Board
+            
+            Dialog --- DialogInner
+        </mermaid-embed>
+        <br>
+        <br>
+        <h2>Физическая структура сайта</h2>
+        <div class="tree-container">
+        <pre><code>
+        /WebCourse_Project
+        ├── index.html          (Главная: Доска заметок и модальное окно)
+        ├── tags.html           (Страница: Управление словарем тегов)
+        ├── backup.html         (Страница: Импорт/Экспорт базы данных)
+        ├── schemes.html        (Страница: Архитектурные схемы проекта)
+        ├── /styles
+        │   ├── reset.css       (Сброс стилей браузера)
+        │   └── main.css        (Глобальные стили, переменные, компоненты)
+        └── /assets/scripts/js/src
+            ├── getData.js      (Модуль: Чтение из LocalStorage)
+            ├── setData.js      (Модуль: Запись в LocalStorage)
+            ├── dialog.js       (Модуль: Логика модальных окон)
+            ├── tags.js         (Контроллер страницы tags.html)
+            ├── backup.js       (Контроллер страницы backup.html)
+            └── script.js       (Контроллер страницы index.html)</code></pre>
+        </div>
+    </div>
+
+</body>
+</html>
